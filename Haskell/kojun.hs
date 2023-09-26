@@ -1,48 +1,57 @@
-import Data.List
+module Kojun where
+    
+import Tabuleiros
 
--- definição de tipos
-type Row a = [a]
-type Matrix a = [Row a]
-type Table = Matrix Int
-type Values = [Int]
+-- Recebe o tabuleiro que deve ser resolvido e seu tamanho
+-- Chama a função principal que irá resolver ele
+-- Retorna o tabuleiro resolvido
+kojun :: Tabuleiro -> Tabuleiro -> Int -> Tabuleiro
+kojun valoresTabuleiro regioesTabuleiro tamanho = 
+    resolverTabuleiro 0 0  valoresTabuleiro regioesTabuleiro (definirRegioes regioesTabuleiro (qtdeRegioes regioesTabuleiro) tamanho)
+
+
+-- Loop principal que deve resolver o tabuleiro entregue a partir de um método de backtracking
+resolverTabuleiro :: Int -> Int -> Tabuleiro -> Tabuleiro -> TabuleiroMapeado -> (Bool, Tabuleiro)
 
 
 
+-- Retorna o número de regiões diferentes
+qtdeRegioes :: Tabuleiro -> Int
+qtdeRegioes = maximum (concat matrizRegioes) + 1
 
--- MATRIZES PARA TESTES
 
--- valores iniciais do puzzle 8x8 (0 significa vazio)
-initial_values8x8 :: Table
-initial_values8x8 = [[3,7,5,3,0,0,0,0],
-                    [0,0,0,0,0,0,0,0],
-                    [0,1,0,2,0,0,0,0],
-                    [0,0,0,0,0,1,0,0],
-                    [0,0,6,4,0,0,0,0],
-                    [0,0,3,0,3,0,5,0],
-                    [0,0,0,0,0,0,0,0],
-                    [0,5,0,0,0,0,4,0]
-                    ]
+-- Mapeia as regioes do tabuleiro e retorna uma matriz de listas de tuplas(a, b)
+-- Cada lista é uma região
+-- Cada tupla é composta pelos índices linha e coluna associado associado no Tabuleiro de Valores
+mapearRegioes :: Tabuleiro -> Int -> Int -> TabuleiroMapeado
+mapearRegioes regioesTabuleiro quantidadeRegioes tamanho =
+    let regioesMapeadas = replicate quantidadeRegioes [] 
+                        in atualizarRegioes regioesMatriz regioes tamanho
 
--- grupos do puzzle 8x8
-groups8x8 :: Table
-groups8x8 = [[1, 2, 2, 2, 2, 2, 3, 3],
-             [1, 1, 2, 2, 4, 4, 5, 5],
-             [6, 6, 7, 7, 7, 7,16,16],
-             [6, 9, 9,14,15,15,17,16],
-             [8, 9, 9, 9,15,18,17,17],
-             [8,10, 9,19,18,18,18,20],
-             [8,10, 9,19,18,13,21,21],
-             [8, 8,11,12,12,13,13,13]
-            ]
 
-main = do
-    putStrLn (show "Bem-vindo ao resolvedor de Kojun!")
+-- Cria uma lista com todos vetores (i, j) do Tabuleiro
+-- Para cada vetor chama a função atualizarRegião com o valor dele
+-- Retorna um TabuleiroMapeado atualizado com uma lista daquela região mapeada
+atualizarRegioes :: Tabuleiro -> TabuleiroMapeado -> Int -> TabuleiroMapeado
+atualizarRegioes regioesTabuleiro regioesMapeadas tamanho =
+    let coordenadas = [(i, j) | i <- [0..tamanho-1], j <- [0..tamanho-1]]
+                    in foldr (atualizarRegiao regioesTabuleiro) regioes coordenadas
 
-    let initial_values = initial_values8x8
-    let groups = groups8x8
 
-    putStrLn (show "Valores iniciais:")
-    putStrLn (show initial_values)
-    putStrLn (show "Grupos do tabuleiro:")
-    putStrLn (show groups)
+-- Atualiza uma lista do TabuleiroMapeado adicionando um vetor (i, j)
+-- Retorna o TabuleiroMapeado atualizado 
+atualizarRegiao :: Tabuleiro -> Vetor -> TabuleiroMapeado -> TabuleiroMapeado
+atualizarRegiao regioesTabuleiro (i, j) regioesMapeadas =
+    let idRegiao = regioesTabuleiro !! i !! j
+        regiaoAtualizada = (i, j) : (regioes !! idRegiao)
+    in take idRegiao regioes ++ [regiaoAtualizada] ++ drop (idRegiao + 1) regioes
+
+
+-- Retorna o tamanho de uma região específica a partir do Tabuleiro Mapeado
+tamanhoRegiao :: TabuleiroMapeado -> Int -> Int
+tamanhoRegiao regioes idRegiao =
+    length (regioes !! idRegiao)
+
+
+
 
