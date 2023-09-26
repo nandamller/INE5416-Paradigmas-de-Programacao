@@ -53,7 +53,6 @@ class Kojun:
         id_regiao = self.reg_tabuleiro[linha][coluna]
         regiao = self.regioes_mapeadas[id_regiao]
 
-        # Como isso funciona?
         for (im, jm) in regiao:
             if self.val_tabuleiro[im][jm] == num:
                 return False
