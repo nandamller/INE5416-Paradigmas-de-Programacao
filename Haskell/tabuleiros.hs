@@ -11,6 +11,8 @@ type Valor = Int
 type Vetor = (Int, Int)
 
 -- Banco de Tabuleiros
+-- Tabuleiros retirados do site: https://www.janko.at/Raetsel/Kojun/index.htm
+-- Tabuleiros 3, 6 e 15 respectivamente
 get_valores_tabuleiro6x6 :: Tabuleiro
 get_valores_tabuleiro6x6  = [[0, 0, 0, 0, 0, 2],
                             [2, 0, 0, 5, 0, 0],
