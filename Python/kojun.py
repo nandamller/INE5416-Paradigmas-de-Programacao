@@ -33,7 +33,7 @@ class Kojun:
             max_num = len(self.regioes_mapeadas[self.reg_tabuleiro[i][j]])
             return self.avaliar_numeros(1, max_num, i, j)
 
-    def avaliar_numeros(self, num, max_num, i, j):
+    def ocupar_posicao(self, num, max_num, i, j):
         if num > max_num:
             return False, self.val_tabuleiro
 
@@ -45,9 +45,9 @@ class Kojun:
                     return resultado, matriz
                 else:
                     self.val_tabuleiro[i][j] = 0
-                    return self.avaliar_numeros(num + 1, max_num, i, j)
+                    return self.ocupar_posicao(num + 1, max_num, i, j)
             else:
-                return self.avaliar_numeros(num + 1, max_num, i, j)
+                return self.ocupar_posicao(num + 1, max_num, i, j)
 
     def numero_possivel(self, linha, coluna, num):
         id_regiao = self.reg_tabuleiro[linha][coluna]
