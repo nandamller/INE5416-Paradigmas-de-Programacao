@@ -3,12 +3,14 @@ module Kojun where
 import Tabuleiros
 
 -- Recebe o tabuleiro que deve ser resolvido e seu tamanho
--- Chama a função principal que irá resolver ele
+-- Chama funções para mapear o tabuleiro principal que irá resolver ele
 -- Retorna o tabuleiro resolvido
 kojun :: Tabuleiro -> Tabuleiro -> Int -> IO String
 kojun valoresTabuleiro regioesTabuleiro tamanho =
-    let tabuleiroResolvido = resolverTabuleiro 0 0 tamanho valoresTabuleiro regioesTabuleiro  (mapearTabuleiro regioesTabuleiro (qtdeRegioes regioesTabuleiro) tamanho)
+    let regioesMapeadas = mapearTabuleiro regioesTabuleiro tamanho
+        tabuleiroResolvido = resolverTabuleiro 0 0 tamanho valoresTabuleiro regioesTabuleiro regioesMapeadas
     in return (formatarResultado tabuleiroResolvido)
+
 
 -- Recebe o tabuleiro resolvido
 -- Caso vazio printa que não tem solução disponível
@@ -19,18 +21,18 @@ formatarResultado tabuleiroResolvido
     | otherwise = unlines (map (unwords . map show) tabuleiroResolvido)
 
 
--- Retorna o número de regiões diferentes (+1 Porque começa em 0)
-qtdeRegioes :: Tabuleiro -> Int
-qtdeRegioes regioesTabuleiro = maximum (concat regioesTabuleiro) + 1
-
-
 -- Mapeia as regioes do tabuleiro e retorna uma matriz de listas de tuplas(a, b)
 -- Cada lista é uma região
 -- Cada tupla é composta pelos índices linha e coluna associado associado no Tabuleiro de Valores
-mapearTabuleiro :: Tabuleiro -> Int -> Int -> TabuleiroMapeado
-mapearTabuleiro regioesTabuleiro quantidadeRegioes tamanho =
-    let regioesMapeadas = replicate quantidadeRegioes []
+mapearTabuleiro :: Tabuleiro -> Int -> TabuleiroMapeado
+mapearTabuleiro regioesTabuleiro tamanho =
+    let regioesMapeadas = replicate (qtdeRegioes regioesTabuleiro) []
     in mapearRegioes regioesTabuleiro regioesMapeadas tamanho
+
+
+-- Retorna o número de regiões diferentes (+1 Porque começa em 0)
+qtdeRegioes :: Tabuleiro -> Int
+qtdeRegioes regioesTabuleiro = maximum (concat regioesTabuleiro) + 1
 
 
 -- Cria uma lista com todos vetores (i, j) do Tabuleiro
@@ -154,13 +156,13 @@ verificarValorAdjacentes valorPosicao i j tamanho valoresTabuleiro =
 -- Cada valor deve ser em ordem crescente de baixo para cima
 verificarColunaRegiao :: Valor -> Int -> Int -> Int -> Tabuleiro -> Tabuleiro -> Bool
 verificarColunaRegiao valorPosicao i j tamanho valoresTabuleiro regioesTabuleiro =
-    -- Verifica se a posição superior está na mesma região
-    -- Se sim, verifica se o valor dela é maior que o da posição
+    -- Verifica se a posição inferior está no tabuleiro e na mesma região
+    -- Se sim, verifica se o valor dela é menor que o da posição
     not (((i-1) >= 0) &&
         ((regioesTabuleiro !! (i-1) !! j) == (regioesTabuleiro !! i !! j)) &&
         ((valoresTabuleiro !! (i-1) !! j) < valorPosicao))
-    -- Verifica se a posição inferior está na mesma região
-    -- Se sim, verifica se o valor dela é menor que o da posição
+    -- Verifica se a posição superior está no tabuleiro e na mesma região
+    -- Se sim, verifica se o valor dela é maior que o da posição
     && not (((i+1) < tamanho) &&
             ((regioesTabuleiro !! (i+1) !! j) == (regioesTabuleiro !! i !! j)) &&
             ((valoresTabuleiro !! (i+1) !! j) > valorPosicao))
