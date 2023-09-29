@@ -3,7 +3,7 @@ module Kojun where
 import Tabuleiros
 
 -- Recebe o tabuleiro que deve ser resolvido e seu tamanho
--- Chama funções para mapear o tabuleiro principal que irá resolver ele
+-- Mapeia o tabuleiro e tenta resolver ele
 -- Retorna o tabuleiro resolvido
 kojun :: Tabuleiro -> Tabuleiro -> Int -> IO String
 kojun valoresTabuleiro regioesTabuleiro tamanho =
