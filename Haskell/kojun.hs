@@ -42,13 +42,22 @@ mapearRegioes regioesTabuleiro regioesMapeadas tamanho =
     in foldr (mapearRegiao regioesTabuleiro) regioesMapeadas coordenadas
 
 
--- Atualiza uma lista do TabuleiroMapeado adicionando um vetor (i, j)
+-- Atualiza uma lista do TabuleiroMapeado adicionando vetores (i, j)
 -- Retorna o TabuleiroMapeado atualizado 
-mapearRegiao :: Tabuleiro -> (Int, Int) -> TabuleiroMapeado -> TabuleiroMapeado
+mapearRegiao :: Tabuleiro -> Vetor -> TabuleiroMapeado -> TabuleiroMapeado
 mapearRegiao regioesTabuleiro (i, j) regioesMapeadas =
     let idRegiao = regioesTabuleiro !! i !! j
         regiaoMapeada = (i, j) : (regioesMapeadas !! idRegiao)
-    in take idRegiao regioesMapeadas ++ [regiaoMapeada] ++ drop (idRegiao + 1) regioesMapeadas
+        regiaoMapeadaAtualizada = mapearElemento idRegiao regiaoMapeada regioesMapeadas
+    in regiaoMapeadaAtualizada
+
+-- Função para atualizar cada elemento de uma lista do Tabuleiro Mapeado 
+mapearElemento :: Int -> a -> Linha a -> Linha a
+mapearElemento _ _ [] = []
+mapearElemento 0 valorRegiao (x:xs) = valorRegiao : xs
+mapearElemento n valorRegiao (x:xs) = x : mapearElemento (n - 1) valorRegiao xs
+
+
 
 
 -- Loop principal que deve resolver o Tabuleiro varrendo posição por posição
