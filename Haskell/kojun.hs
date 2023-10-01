@@ -53,13 +53,12 @@ mapearRegiao regioesTabuleiro (i, j) regioesMapeadas =
         regiaoMapeadaAtualizada = mapearElemento idRegiao regiaoMapeada regioesMapeadas
     in regiaoMapeadaAtualizada
 
+
 -- Função para atualizar cada elemento de uma lista do Tabuleiro Mapeado 
 mapearElemento :: Int -> a -> Linha a -> Linha a
 mapearElemento _ _ [] = []
 mapearElemento 0 valorRegiao (x:xs) = valorRegiao : xs
 mapearElemento n valorRegiao (x:xs) = x : mapearElemento (n - 1) valorRegiao xs
-
-
 
 
 -- Loop principal que deve resolver o Tabuleiro varrendo posição por posição
@@ -96,7 +95,7 @@ tamanhoRegiao regioesMapeadas idRegiao =
 -- Usa o algoritmo de Backtracking para tentar ocupar a região com cada número possível
 -- Se nenhum número for válido significa que a posição não é ocupável e o tabuleiro não é resolvível
 -- Retorna um Tabuleiro Vazio ou Resolvido como resposta
-ocuparPosicao :: Valor -> Int -> Int -> Int -> Tabuleiro -> Tabuleiro -> TabuleiroMapeado -> [[Int]]
+ocuparPosicao :: Valor -> Int -> Int -> Int -> Tabuleiro -> Tabuleiro -> TabuleiroMapeado -> Tabuleiro
 ocuparPosicao valorPosicao i j tamanho valoresTabuleiro regioesTabuleiro regioesMapeadas
     -- Se não foi possível ocupar a posição não é possível resolver o tabuleiro
     -- Retorna um tabuleiro vazio
@@ -108,9 +107,9 @@ ocuparPosicao valorPosicao i j tamanho valoresTabuleiro regioesTabuleiro regioes
         if valorPossivel valorPosicao i j tamanho valoresTabuleiro regioesTabuleiro regioesMapeadas then
             let tabuleiroAtualizado = atualizarTabuleiro valorPosicao i j valoresTabuleiro
                 tabuleiro = resolverTabuleiro i (j + 1) tamanho tabuleiroAtualizado regioesTabuleiro regioesMapeadas
-            in
+    
                 -- Caso as próximas iterações forem bem sucedidas retorna o tabuleiro resolvido até o momento
-                if not (null tabuleiro || all null tabuleiro) then 
+            in  if not (null tabuleiro || all null tabuleiro) then 
                     tabuleiro
                 -- Se alguma der errado tenta resolver mais uma vez essa posição com um número menor
                 else 
@@ -147,7 +146,7 @@ verificarValorRegiao valorPosicao valoresTabuleiro regiaoMapeada =
 -- Verifica os valores nas posições da direita, esquerda, inferior e superior, respectivamente
 verificarValorAdjacentes :: Valor -> Int -> Int -> Int -> Tabuleiro -> Bool
 verificarValorAdjacentes valorPosicao i j tamanho valoresTabuleiro =
-    not ((j+1 < tamanho) && (valoresTabuleiro !! i) !! (j+1) == valorPosicao) &&
+    not ((j+1 < tamanho) && (valoresTabuleiro !! i !! (j+1) == valorPosicao)) &&
     not ((j-1 >= 0) && (valoresTabuleiro !! i !! (j-1) == valorPosicao)) &&
     not ((i+1 < tamanho) && (valoresTabuleiro !! (i+1) !! j == valorPosicao)) &&
     not ((i-1 >= 0) && (valoresTabuleiro !! (i-1) !! j == valorPosicao)) 
